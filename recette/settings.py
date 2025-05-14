@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 
-AUTH_USER_MODEL = 'authentification.User'
+AUTH_USER_MODEL = 'authentification.User' #nomapplication.nomclass = préciser à django quel modèle utiliser pour ne pas qu'il utilise le sien par défaut
 
 INSTALLED_APPS = [
     'django.contrib.admin',
