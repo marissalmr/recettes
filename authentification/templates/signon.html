@@ -1,0 +1,14 @@
+
+{% block content %}
+    <p>{{ message }}</p>
+    <form method="post">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <button type="submit" >Se connecter</button>
+        <p> 
+        <a href="{% url 'signup' %}">Don't have an account? Sign up</a>
+        </p>
+        
+        
+    </form>
+{% endblock content %}

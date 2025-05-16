@@ -1,0 +1,14 @@
+{% block content %}
+    <h2>Inscription</h2>
+    {% if form.errors %} <!-- Si y'a des erreurs dans le formuilaire : -->
+        {{ form.errors }} <!-- Affiche les erreurs si l'utilisateur a mal remplit les infos  --> 
+    {% endif %}
+    <form method="post">
+        {{ form.as_p }} 
+        {% csrf_token %} 
+        <button type="submit" >Register</button>
+        <p> 
+        <a href="{% url 'signon' %}"> Already have an account? Log in </a>
+        </p>
+    </form>
+{% endblock content %}
