@@ -1,6 +1,8 @@
 from django.conf import settings
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.shortcuts import redirect, render
+
+
 
 from . import forms
 
@@ -13,8 +15,9 @@ def signup_page(request):
             user = form.save() #enregistre utilisateur en bdd et stock en variable
             # auto-login user
             login(request, user)
-            return redirect(settings.LOGIN_REDIRECT_URL)
+            return redirect('home_page')
     return render(request, 'signup.html', context={'form': form})
+   
 
 
 def login_page(request): #Demande que je fais au serveur en cliquant = requete est un objet
@@ -36,8 +39,17 @@ def login_page(request): #Demande que je fais au serveur en cliquant = requete e
     if user is not None: #Dans le cas ou on le trouve dans la BDD
                 login(request, user)
                 message = f'Bonjour, {user.username}! Vous êtes connecté.'
+                return redirect('home_page')
                 
     else:
                 message = 'Identifiants invalides.'
     return render(request, 'signon.html', context={'form': form, 'message': message}) #Le render permet d'afficher la page html
     
+
+def log_out(request): #On la met ici mais on l'affichera via un templates de l'applicaiton accueil
+      logout(request) 
+      return redirect('signon') #Quand il se déco il restera sur la page d'accueil
+          
+          
+       
+       
