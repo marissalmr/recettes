@@ -1,0 +1,12 @@
+<h1> Create your own recipes </h1>
+
+{% block content %}
+    {% if form.errors %} <!-- Si y'a des erreurs dans le formuilaire : -->
+        {{ form.errors }} <!-- Affiche les erreurs si l'utilisateur a mal remplit les infos  --> 
+    {% endif %}
+    <form method="post">
+        {{ form.as_p }} 
+        {% csrf_token %} 
+        <button type="submit" >Send</button>
+    </form>
+{% endblock content %}

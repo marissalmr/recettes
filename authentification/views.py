@@ -16,7 +16,9 @@ def signup_page(request):
             # auto-login user
             login(request, user)
             return redirect('home_page')
-    return render(request, 'signup.html', context={'form': form})
+    if request.method == "GET":
+        print("ici")
+        return render(request, 'signup.html', context={'form': form})
    
 
 
