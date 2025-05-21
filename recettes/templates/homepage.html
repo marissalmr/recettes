@@ -1,12 +1,10 @@
-<h1> Home </h1>
+{% include 'includes/navbar.html' %}
+
+
 
 {% block content %}
    
-<form action="{% url 'logout' %}" method="post">
-  {% csrf_token %}
-  <button type="submit">Log Out</button>
-  </form>
-  <a href="{% url 'create_recipes' %}" class="boutton">Create your own recipes</a>
+
 
 <div class="mt-4">
  {%for recette in recettes%}
