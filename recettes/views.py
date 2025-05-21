@@ -9,19 +9,19 @@ from django.contrib.auth.decorators import login_required
 def home_page(request):
      return render(request, 'homepage.html',)
 
-
-def create_recipes(request):
-     form = forms.Creation()
-     if request.method == "POST":
+@login_required
+def create_recipes(request): #demande envoyée par l'user au serveur
+     form = forms.Creation() #Formulaire vide
+     if request.method == "POST": #L'utilisateur envoie des données
           form = forms.Creation(request.POST)
           if form.is_valid():
               recipe = form.save(commit=False)
               recipe.user = request.user
-              recipe.save()
+              recipe.save() 
               return redirect('home_page')
-          else :
+          if request.method == "GET":
                form = forms.Creation()
-     return render(request, 'recipes_creation.html', {'form': form})
+     return render(request, 'recipes_creation.html', {'form': form}) #Que le formulaire soit envoyée ou pas, on affiche la page HTML avec le formulaire
               
 
 

@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authentification',
     'recettes',
-    'recette',
+    'widget_tweaks'
 ]
 
 MIDDLEWARE = [
@@ -129,3 +129,4 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = 'signon'
+

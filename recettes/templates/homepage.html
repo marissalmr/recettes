@@ -5,6 +5,7 @@
 <form action="{% url 'logout' %}" method="post">
   {% csrf_token %}
   <button type="submit">Log Out</button>
+  <a href="{% url 'create_recipes' %}" class="boutton">Create your own recipes</a>
 </form>
 
 {% endblock %}

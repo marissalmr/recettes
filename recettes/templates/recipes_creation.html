@@ -1,12 +1,92 @@
-<h1> Create your own recipes </h1>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Publish your own recipes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ec4899',
+            pastel: '#ffe4e6',
+            chocolate: '#4b2c2c'
+          },
+          fontFamily: {
+            sans: ['"Poppins"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
 
-{% block content %}
-    {% if form.errors %} <!-- Si y'a des erreurs dans le formuilaire : -->
-        {{ form.errors }} <!-- Affiche les erreurs si l'utilisateur a mal remplit les infos  --> 
-    {% endif %}
-    <form method="post">
-        {{ form.as_p }} 
-        {% csrf_token %} 
-        <button type="submit" >Send</button>
+<body class="bg-pink-100 min-h-screen flex items-center justify-center font-sans">
+
+  {% load static %}
+  {% load widget_tweaks %}
+
+  {% block content %}
+  <div class="w-full max-w-6xl bg-white rounded-3xl shadow-xl flex overflow-hidden p-10">
+
+    <!-- Colonne gauche -->
+    <div class="w-1/2 bg-pink-100 p-10 rounded-2xl flex flex-col">
+      <img src="{% static 'recettes/images/my_logo.png' %}" alt="Crumble Kiss Logo" class="w-20 h-20 mb-4">
+      <h2 class="text-2xl font-bold text-primary mb-8">Publish your own recipes</h2>
+
+      <form method="post" enctype="multipart/form-data" class="space-y-5 h-full">
+        {% csrf_token %}
+
+        <div>
+          <label class="block text-sm text-chocolate mb-1">Name of your recipe</label>
+          {{ form.recipe_title|add_class:"w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" }}
+        </div>
+
+        <div>
+          <label class="block text-sm text-chocolate mb-1">Prep Time</label>
+          {{ form.time_in_minutes|add_class:"w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" }}
+        </div>
+
+        <div>
+          <label class="block text-sm text-chocolate mb-1">Servings</label>
+          {{ form.category_choices|add_class:"w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" }}
+        </div>
+
+        <div>
+          <label class="block text-sm text-chocolate mb-1">Ingredients</label>
+          {{ form.ingredients_list|add_class:"w-full h-24 px-4 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary" }}
+        </div>
+
+        <div>
+          <label class="block text-sm text-chocolate mb-1">Preparation Steps</label>
+          {{ form.preparation_steps|add_class:"w-full h-40 px-4 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary" }}
+        </div>
+    </div>
+
+    <!-- Colonne droite -->
+    <div class="w-1/2 pl-10 flex flex-col justify-between">
+
+      <div>
+        <label class="block text-sm text-chocolate mb-2">Image</label>
+        {{ form.image|add_class:"hidden" }}
+        <label for="{{ form.image.id_for_label }}" class="cursor-pointer block w-full aspect-square bg-gray-100 border border-dashed rounded-xl flex items-center justify-center text-4xl text-gray-500">
+          +
+        </label>
+      </div>
+
+      <div class="mt-6">
+        <label class="block italic text-sm text-chocolate mb-1">Description</label>
+        {{ form.short_description|add_class:"w-full h-32 px-4 py-2 border rounded-lg resize-none italic focus:outline-none focus:ring-2 focus:ring-primary" }}
+      </div>
+
+      <button type="submit" class="mt-6 self-end bg-primary text-white font-semibold py-2 px-6 rounded-xl shadow hover:bg-pink-500 transition">
+        Publish
+      </button>
     </form>
-{% endblock content %}
+    </div>
+  </div>
+  {% endblock content %}
+
+</body>
+</html>
