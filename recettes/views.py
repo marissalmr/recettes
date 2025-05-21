@@ -1,13 +1,20 @@
 from . import forms
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from .models import Recettes
 
 
 
 
 @login_required #Peut pas y accèder si t'es pas connecter 
 def home_page(request):
-     return render(request, 'homepage.html',)
+     all_recette= Recettes.objects.all().values()
+     #for recette in all_recette:
+          #print(recette["recipe_title"])
+     context = {
+        'recettes' : all_recette 
+     }
+     return render(request, 'homepage.html', context)
 
 @login_required
 def create_recipes(request): #demande envoyée par l'user au serveur

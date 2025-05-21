@@ -5,7 +5,16 @@
 <form action="{% url 'logout' %}" method="post">
   {% csrf_token %}
   <button type="submit">Log Out</button>
+  </form>
   <a href="{% url 'create_recipes' %}" class="boutton">Create your own recipes</a>
-</form>
 
-{% endblock %}
+<div class="mt-4">
+ {%for recette in recettes%}
+ <p> {{ recette.recipe_title }} </p> 
+  <p> {{recette.time_in_minutes}} minutes </p>
+  <p> {{recette.category_choices}} </p>
+  <p> Crée par : {{recette.user}} </p>
+{%endfor%}
+</div>
+ {% endblock %}
+ 
