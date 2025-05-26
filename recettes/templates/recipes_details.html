@@ -1,0 +1,16 @@
+{% include 'includes/navbar.html' %}
+{%block content %}
+<p>{{ recette.recipe_title }}</p>
+<p>{{ recette.ingredients_list }}</p>
+<p>{{ recette.preparation_steps }}</p>
+
+<p>{{ recette.category_choices }}</p>
+<p>{{ recette.time_in_minutes }}</p>
+<p>{{ recette.user.username }}</p>
+
+{%endblock content %}
+
+
+
+
+

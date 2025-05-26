@@ -1,18 +1,36 @@
 {% include 'includes/navbar.html' %}
 
-
-
 {% block content %}
-   
+<div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for recette in recettes %}
+    <details class="bg-white rounded-2xl shadow-lg p-6 transition-all hover:shadow-xl open:shadow-2xl open:ring-2 ring-blue-300 group cursor-pointer">
+        <summary class="list-none">
+            <h2 class="text-2xl font-bold text-gray-800 mb-3">{{ recette.recipe_title }}</h2>
 
+            <div class="flex items-center gap-2 text-sm text-gray-600 mb-1">
+                <span class="text-pink-500">⏱</span>
+                <span>{{ recette.time_in_minutes }} minutes</span>
+            </div>
 
-<div class="mt-4">
- {%for recette in recettes%}
- <p> {{ recette.recipe_title }} </p> 
-  <p> {{recette.time_in_minutes}} minutes </p>
-  <p> {{recette.category_choices}} </p>
-  <p> Crée par : {{recette.user}} </p>
-{%endfor%}
+            <div class="flex items-center gap-2 text-sm text-gray-600 mb-1">
+                <span class="text-blue-500">📂</span>
+                <span>{{ recette.category_choices }}</span>
+            </div>
+
+            <div class="flex items-center gap-2 text-sm text-gray-500 mt-4 pt-2 border-t">
+                <span class="text-green-500">👤</span>
+                <span>Créé par : {{ recette.user.username }}</span>
+            </div>
+        </summary>
+
+        <!-- Aperçu visible uniquement quand la carte est ouverte -->
+        <div class="mt-4 text-sm text-gray-700 leading-relaxed">
+            <p>{{ recette.short_description}}</p>
+            <a href="{% url 'recipes_details' recette.id %}" class="text-blue-600 underline mt-2 inline-block">Voir la recette complète </a>
+        </div>
+    </details>
+    {% endfor %}
 </div>
- {% endblock %}
- 
+{% endblock %}
+
+

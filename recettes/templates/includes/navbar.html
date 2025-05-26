@@ -25,8 +25,10 @@
       </div>
       <!-- Liens -->
       <div class="hidden md:flex space-x-8 text-sm font-medium text-chocolate">
-        <a href="{% url 'all_recettes' %}" class="hover:text-accent">All Recipes</a>
+        <a href="{% url 'home_page' %}" class="hover:text-accent">All Recipes</a>
         <a href="{% url 'create_recipes' %}" class="hover:text-accent">Add a Recipe</a>
+        <a href="{% url 'my_recipes' %}" class="hover:text-accent">My recipes</a>
+
       </div>
       <!-- Utilisateur -->
       <div class="relative ml-3">
@@ -54,7 +56,7 @@
   </div>
   <!-- Menu mobile -->
   <div id="menu" class="hidden md:hidden bg-navbg px-4 pb-4 space-y-2">
-    <a href="{% url 'all_recettes' %}" class="block text-chocolate hover:text-accent">All Recipes</a>
+    <a href="{% url 'home_page' %}" class="block text-chocolate hover:text-accent">All Recipes</a>
     <a href="{% url 'create_recipes' %}" class="block text-chocolate hover:text-accent">Add a Recipe</a>
   </div>
   <script>

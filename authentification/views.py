@@ -19,6 +19,7 @@ def signup_page(request):
     if request.method == "GET":
         print("ici")
         return render(request, 'signup.html', context={'form': form})
+    return render(request, 'signup.html', context={'form': form}) #Obligé sinon il retourne rien si c'est autre chose que POST et Get
    
 
 
