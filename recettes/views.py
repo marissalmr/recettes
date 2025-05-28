@@ -34,11 +34,11 @@ def recipe_details(request, id):
 @login_required
 def my_recipes(request):
      mes_recettes = Recettes.objects.filter(user=request.user)
-     return render(request, 'homepage.html', {'recettes': mes_recettes, 'source': 'my_recipes'})
+     return render(request, 'homepage.html', {'recettes': mes_recettes, 'source': 'my_recipes', "source2": "delete"})
 
 @login_required
-def recipe_update(request, id):
-     recette = Recettes.objects.get(id=id)
+def recipe_update(request, id_from_url):
+     recette = get_object_or_404(Recettes,id=id_from_url, user=request.user) #id = id de la recette qu'on veut affichert via l'url et elle doit appartenir à l'utilisateur connécté
      if request.method == "GET":
           form = forms.Creation(instance=recette)
           return render(request, 'recipes_creation.html', {'form': form} )
@@ -47,7 +47,20 @@ def recipe_update(request, id):
           if form.is_valid():
               recipe = form.save()
           return redirect('home_page')
-     
+    
+
+def recipe_delete(request, id_from_url): #Identifiant de la recette à supprimer transmis depuis l'url pour pas supprimer les autres qui ne viennent pas de nous
+     mes_recette = get_object_or_404(Recettes,id=id_from_url, user=request.user) #On récuppere l'objet recette qui à le bon identifiant et qui a été crée par l'utilisateur connécté
+     if request.method == "POST": #Pas de delete car le HTML ne traite que des GET (via <a>) et des POST via <form method="POST"> 
+          mes_recette.delete()
+
+          #return render(request, 'homepage.html', {'recettes': rafraichissement_page, 'source2': 'delete_recipes'})
+
+     return redirect('my_recipes')
+
+
+
+
      
      
 

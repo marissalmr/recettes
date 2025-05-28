@@ -32,7 +32,15 @@
             <p>{{ recette.short_description}}</p>
             {% if source == "my_recipes" %}
                 <a href="{% url 'update_recipes' recette.id %}" class="text-blue-600 underline mt-2 inline-block">Modifier la recette </a>
-                {% endif %}
+
+            <form method="POST" action="{% url 'delete_recipes' recette.id %}">
+    {% csrf_token %}
+    <button type="submit" class="text-red-600 underline mt-2 inline-block">Supprimer la recette</button>
+    {% endif %}
+</form>
+</form>
+
+
         </div>
     </details>
     {% endfor %}
