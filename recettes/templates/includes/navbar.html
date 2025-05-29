@@ -23,29 +23,35 @@
         <img src="{% static 'recettes/images/my_logo.png' %}" alt="Logo" class="w-12 h-12">
         <span class="text-2xl font-bold text-accent">Crumble Kiss</span>
       </div>
+
       <!-- Liens -->
       <div class="hidden md:flex space-x-8 text-sm font-medium text-chocolate">
         <a href="{% url 'home_page' %}" class="hover:text-accent">All Recipes</a>
         <a href="{% url 'create_recipes' %}" class="hover:text-accent">Add a Recipe</a>
         <a href="{% url 'my_recipes' %}" class="hover:text-accent">My recipes</a>
-
       </div>
+
       <!-- Utilisateur -->
       <div class="relative ml-3">
-          <div>
-            <button type="button" class="relative flex rounded-full bg-gray-800 text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
-              <span class="absolute -inset-1.5"></span>
-              <span class="sr-only">Open user menu</span>
-              <img class="size-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
-            </button>
-          </div>
-          <div class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-hidden" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
-            <!-- Active: "bg-gray-100 outline-hidden", Not Active: "" -->
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
-            <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
-          </div>
+        <div>
+          <button type="button" class="relative flex rounded-full bg-gray-800 text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+            <span class="absolute -inset-1.5"></span>
+            <span class="sr-only">Open user menu</span>
+            <!-- Avatar neutre sans image -->
+            <div class="size-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-xs font-bold">
+              ?
+            </div>
+          </button>
         </div>
+
+        <!-- Menu utilisateur -->
+        <div id="user-dropdown" class="hidden absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5">
+          <a href="#" class="block px-4 py-2 text-sm text-gray-700">Your Profile</a>
+          <a href="#" class="block px-4 py-2 text-sm text-gray-700">Settings</a>
+          <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-700">Sign out</a>
+        </div>
+      </div>
+
       <!-- Toggle mobile -->
       <button id="menu-btn" class="md:hidden text-chocolate focus:outline-none">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
@@ -54,14 +60,24 @@
       </button>
     </div>
   </div>
+
   <!-- Menu mobile -->
   <div id="menu" class="hidden md:hidden bg-navbg px-4 pb-4 space-y-2">
     <a href="{% url 'home_page' %}" class="block text-chocolate hover:text-accent">All Recipes</a>
     <a href="{% url 'create_recipes' %}" class="block text-chocolate hover:text-accent">Add a Recipe</a>
   </div>
+
+  <!-- Scripts -->
   <script>
     document.getElementById('menu-btn').addEventListener('click', () => {
       document.getElementById('menu').classList.toggle('hidden');
+    });
+
+    const userBtn = document.getElementById('user-menu-button');
+    const dropdown = document.getElementById('user-dropdown');
+
+    userBtn.addEventListener('click', () => {
+      dropdown.classList.toggle('hidden');
     });
   </script>
 </nav>

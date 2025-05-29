@@ -50,7 +50,7 @@ def recipe_update(request, id_from_url):
     
 
 def recipe_delete(request, id_from_url): #Identifiant de la recette à supprimer transmis depuis l'url pour pas supprimer les autres qui ne viennent pas de nous
-     mes_recette = get_object_or_404(Recettes,id=id_from_url, user=request.user) #On récuppere l'objet recette qui à le bon identifiant et qui a été crée par l'utilisateur connécté
+     mes_recette = get_object_or_404(Recettes, id=id_from_url, user=request.user) #On récuppere l'objet recette qui à le bon identifiant et qui a été crée par l'utilisateur connécté
      if request.method == "POST": #Pas de delete car le HTML ne traite que des GET (via <a>) et des POST via <form method="POST"> 
           mes_recette.delete()
 
