@@ -16,7 +16,10 @@ def signup_page(request):
             # auto-login user
             login(request, user)
             return redirect('home_page')
-    return render(request, 'signup.html', context={'form': form})
+    if request.method == "GET":
+        print("ici")
+        return render(request, 'signup.html', context={'form': form})
+    return render(request, 'signup.html', context={'form': form}) #Obligé sinon il retourne rien si c'est autre chose que POST et Get
    
 
 

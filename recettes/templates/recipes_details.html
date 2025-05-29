@@ -1,0 +1,59 @@
+{% include 'includes/navbar.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto mt-10 bg-white rounded-2xl shadow-lg p-8 space-y-6">
+
+  <!-- Titre -->
+  <h1 class="text-3xl font-bold text-accent">{{ recette.recipe_title }}</h1>
+
+  <!-- Infos recette -->
+  <div class="flex items-center flex-wrap gap-4 text-sm text-gray-600 mt-4">
+    <div class="flex items-center gap-2">
+      <span class="text-pink-500">⏱</span>
+      <span>{{ recette.time_in_minutes }} minutes</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-blue-500">📂</span>
+      <span>{{ recette.category_choices }}</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-green-500">👤</span>
+      <span>Par : {{ recette.user.username }}</span>
+    </div>
+  </div>
+
+  <!-- Ingrédients -->
+  <div>
+    <h2 class="text-xl font-semibold text-chocolate mb-2">Ingrédients</h2>
+    <p class="text-gray-700 leading-relaxed whitespace-pre-line">
+      {{ recette.ingredients_list }}
+    </p>
+  </div>
+
+  <!-- Étapes de préparation -->
+  <div>
+    <h2 class="text-xl font-semibold text-chocolate mb-2">Préparation</h2>
+    <p class="text-gray-700 leading-relaxed whitespace-pre-line">
+      {{ recette.preparation_steps }}
+    </p>
+  </div>
+
+  <!-- Boutons Modifier / Supprimer (si besoin) -->
+  {% if source == "my_recipes" %}
+  <div class="flex gap-4 pt-6 border-t border-gray-200">
+    <a href="{% url 'update_recipes' recette.id %}" class="text-blue-600 underline">Modifier la recette</a>
+
+    <form method="POST" action="{% url 'delete_recipes' recette.id %}">
+      {% csrf_token %}
+      <button type="submit" class="text-red-600 underline">Supprimer la recette</button>
+    </form>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+
+
+
+
