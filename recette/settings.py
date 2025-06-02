@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authentification',
     'recettes',
-    'widget_tweaks'
+    
+    
 ]
 
 MIDDLEWARE = [

@@ -38,6 +38,14 @@
     </p>
   </div>
 
+
+<form action="{% url 'add_comments' recette.id %}" method="POST">
+  {% csrf_token %}
+  <label for="comment">Votre commentaire :</label><br>
+  <textarea id="comment" name="contenu_com" rows="5" cols="40" placeholder="Écrivez votre commentaire ici..."></textarea><br>
+  <button type="submit">Envoyer</button>
+</form>
+
   <!-- Boutons Modifier / Supprimer (si besoin) -->
   {% if source == "my_recipes" %}
   <div class="flex gap-4 pt-6 border-t border-gray-200">

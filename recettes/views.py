@@ -2,6 +2,7 @@ from . import forms
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Recettes
+from .forms import Comments
 
 
 @login_required #Peut pas y accèder si t'es pas connecter 
@@ -18,17 +19,18 @@ def create_recipes(request): #demande envoyée par l'user au serveur
      if request.method == "POST": #L'utilisateur envoie des données
           form = forms.Creation(request.POST)
           if form.is_valid():
-              recipe = form.save(commit=False)
-              recipe.user = request.user
-              recipe.save() 
+              recipe = form.save(commit=False) #Crée l'objet recette en mémoire (avec les données du formulaire) mais ne l'enregistre pas encore en BDD car il manque le champ user
+              recipe.user = request.user #« Cette recette a été créée par l’utilisateur actuellement connecté »
+              recipe.save() #Et mtn qu'on a tout ce dont on a besoin, on enregistre l'objet complet (avec le user) en BDD
               return redirect('home_page')
           if request.method == "GET":
                form = forms.Creation()
      return render(request, 'recipes_creation.html', {'form': form}) #Que le formulaire soit envoyée ou pas, on affiche la page HTML avec le formulaire
 
-@login_required
+@login_required 
 def recipe_details(request, id):
      recette = get_object_or_404(Recettes, id=id)
+     #comments = recette.comments.all()
      return render(request, 'recipes_details.html', {'recette': recette})
 
 @login_required
@@ -58,6 +60,21 @@ def recipe_delete(request, id_from_url): #Identifiant de la recette à supprimer
 
      return redirect('my_recipes')
 
+def add_comments(request, recette_id):
+    recette = Recettes.objects.get(id=recette_id)
+
+    if request.method == "POST":
+        form = Comments(request.POST)
+        if form.is_valid():
+            commentaire = form.save(commit=False)
+            commentaire.recettes = recette
+            commentaire.save()
+            return redirect("home_page")
+    else:  
+        form = Comments()
+
+    return render(request, "recipe_details.html")
+          
 
 
 
