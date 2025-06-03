@@ -30,8 +30,8 @@ def create_recipes(request): #demande envoyée par l'user au serveur
 @login_required 
 def recipe_details(request, id):
      recette = get_object_or_404(Recettes, id=id)
-     #comments = recette.comments.all()
-     return render(request, 'recipes_details.html', {'recette': recette})
+     commentaires = recette.commentaires_set.all() #donne moi tous les commentaires lié à cette recette
+     return render(request, 'recipes_details.html', {'recette': recette, 'commentaires':commentaires}) #dictionnaire = variable a utiliser dans le template
 
 @login_required
 def my_recipes(request):
@@ -73,7 +73,7 @@ def add_comments(request, recette_id):
     else:  
         form = Comments()
 
-    return render(request, "recipe_details.html")
+    return render(request, "recipes_details.html")
           
 
 
