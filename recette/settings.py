@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'authentification',
     'recettes',
     'widget_tweaks'
+    
 ]
 
 MIDDLEWARE = [

@@ -7,6 +7,7 @@ from authentification.models import User
 
 
 class Recettes(models.Model):
+    id = models.AutoField(primary_key=True)
     recipe_title = models.CharField(max_length=60)
     short_description = models.CharField(max_length=400)
     ingredients_list = models.TextField(blank=True)
@@ -34,7 +35,10 @@ class Commentaires(models.Model):
     contenu_com = models.CharField(max_length=255)
     date_publication = models.DateTimeField(auto_now_add=True)
     recettes = models.ForeignKey(Recettes,on_delete=models.CASCADE)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+
     
+
 
 
 
