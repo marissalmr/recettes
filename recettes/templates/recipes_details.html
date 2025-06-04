@@ -67,6 +67,34 @@
     </div>
   </div>
 
+<form action="{% url 'rating' recette.id %}" method="POST" class="bg-gray-50 p-4 rounded-xl shadow-sm space-y-4">
+  {% csrf_token %}
+  
+  <label for="note" class="block text-sm font-medium text-gray-700">Note (sur 5) :</label>
+  <input
+    type="number"
+    name="valeur_notes"
+    id="note"
+    min="1"
+    max="5"
+    required
+    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
+    placeholder="Ex: 4"
+  />
+
+  <div class="text-right mt-4">
+    <button type="submit" class="px-4 py-2 bg-accent text-white font-semibold rounded-md hover:bg-pink-500 transition">
+      Noter
+    </button>
+  </div>
+</form>
+
+  {% for rating in ratings %}
+  <p class="text-gray-800">Note : {{ rating.valeur_notes }}</p>
+{% endfor %}
+
+
+
   <!-- Boutons Modifier / Supprimer -->
   {% if source == "my_recipes" %}
   <div class="flex gap-4 pt-6 border-t border-gray-200">

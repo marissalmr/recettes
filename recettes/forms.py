@@ -11,6 +11,12 @@ class Comments(ModelForm):
         model = Commentaires
         fields = ["contenu_com"]
 
+class Notes(ModelForm):
+    class Meta :
+        model = Notes
+        fields = ["valeur_notes"]
+        
+
 
 
 

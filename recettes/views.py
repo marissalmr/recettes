@@ -2,7 +2,7 @@ from . import forms
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Recettes
-from .forms import Comments
+from .forms import Comments, Notes
 
 
 @login_required #Peut pas y accèder si t'es pas connecter 
@@ -31,7 +31,7 @@ def create_recipes(request): #demande envoyée par l'user au serveur
 def recipe_details(request, id):
      recette = get_object_or_404(Recettes, id=id)
      commentaires = recette.commentaires_set.all() #donne moi tous les commentaires lié à cette recette
-     return render(request, 'recipes_details.html', {'recette': recette, 'commentaires':commentaires}) #dictionnaire = variable a utiliser dans le template
+     return render(request, 'recipes_details.html', {'recette': recette, 'commentaires': commentaires, 'rating' : rating}) #dictionnaire = variable a utiliser dans le template
 
 @login_required
 def my_recipes(request):
@@ -72,21 +72,20 @@ def add_comments(request, recette_id): #identifiant de la recette ciblé
             commentaire.user = request.user #On associe le commentaire à l'utilisateur connécté
             commentaire.save()
             return redirect("home_page")
-    else:  
-        form = Comments()
+        return render(request, "recipes_details.html")
+    
 
-    return render(request, "recipes_details.html")
+@login_required
+def rating(request,recette_id):
+     recette = Recettes.objects.get(id=recette_id)
+     if request.method == "POST":
+          form = Notes(request.POST)
+          print(form)
+          if form.is_valid():
+               notes = form.save(commit=False)
+               notes.recettes = recette
+               notes.user = request.user
+               notes.save()
+               return redirect("home_page")
+     return render(request, "recipes_detail.html")
           
-
-
-
-     
-     
-
-
-
-              
-
-
-
-

@@ -27,8 +27,10 @@ class Recettes(models.Model):
 
 
 class Notes(models.Model):
-    valeur_notes = models.PositiveSmallIntegerField
+    valeur_notes = models.PositiveSmallIntegerField(default=0)
     recettes = models.ForeignKey(Recettes, on_delete=models.CASCADE)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+
 
 
 class Commentaires(models.Model):
