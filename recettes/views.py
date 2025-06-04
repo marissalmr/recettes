@@ -50,7 +50,7 @@ def recipe_update(request, id_from_url):
               recipe = form.save()
           return redirect('home_page')
     
-
+@login_required
 def recipe_delete(request, id_from_url): #Identifiant de la recette à supprimer transmis depuis l'url pour pas supprimer les autres qui ne viennent pas de nous
      mes_recette = get_object_or_404(Recettes, id=id_from_url, user=request.user) #On récuppere l'objet recette qui à le bon identifiant et qui a été crée par l'utilisateur connécté
      if request.method == "POST": #Pas de delete car le HTML ne traite que des GET (via <a>) et des POST via <form method="POST"> 
@@ -60,14 +60,16 @@ def recipe_delete(request, id_from_url): #Identifiant de la recette à supprimer
 
      return redirect('my_recipes')
 
-def add_comments(request, recette_id):
-    recette = Recettes.objects.get(id=recette_id)
+@login_required
+def add_comments(request, recette_id): #identifiant de la recette ciblé
+    recette = Recettes.objects.get(id=recette_id) #Rattacher le commentaire a une recette précise via son id 
 
     if request.method == "POST":
         form = Comments(request.POST)
         if form.is_valid():
-            commentaire = form.save(commit=False)
-            commentaire.recettes = recette
+            commentaire = form.save(commit=False) #Foreign key pas demandé à l'user donc on met pas tout de suite en BDD pour le mettre juste en bas 
+            commentaire.recettes = recette #On associe le commentaire à la recette sélectionnée
+            commentaire.user = request.user #On associe le commentaire à l'utilisateur connécté
             commentaire.save()
             return redirect("home_page")
     else:  

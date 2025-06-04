@@ -25,7 +25,6 @@
 
         <!-- Aperçu visible uniquement quand la carte est ouverte -->
         <div class="mt-4 text-sm text-gray-700 leading-relaxed">
-            <p>{{ recette.short_description}}</p>
             <a href="{% url 'recipes_details' recette.id %}" class="text-blue-600 underline mt-2 inline-block">Voir la recette complète </a>
         </div>
         <div class="mt-4 text-sm text-gray-700 leading-relaxed">
@@ -35,10 +34,10 @@
 
             <form method="POST" action="{% url 'delete_recipes' recette.id %}">
     {% csrf_token %}
-    <button type="submit" class="text-red-600 underline mt-2 inline-block">Supprimer la recette</button>
+    <button type="submit" class="text-red-600 underline mt-2 inline-block">Delete recipe</button>
     {% endif %}
-</form>
-</form>
+            </form>
+
 
 
         </div>

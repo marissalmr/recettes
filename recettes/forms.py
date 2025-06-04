@@ -10,7 +10,11 @@ class Comments(ModelForm):
     class Meta :
         model = Commentaires
         fields = ["contenu_com"]
-        
+
+
+
+
+
 
 
 
