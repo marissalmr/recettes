@@ -37,6 +37,95 @@
       {{ recette.preparation_steps }}
     </p>
   </div>
+<!-- Notation par étoiles -->
+<div class="mt-10">
+  <h2 class="text-xl font-semibold text-chocolate mb-4">Leave a rating</h2>
+
+  <form action="{% url 'rating' recette.id %}" method="POST" class="bg-gray-50 p-4 rounded-xl shadow-sm space-y-4">
+    {% csrf_token %}
+
+    <div class="flex items-center gap-1" id="star-rating">
+      {% for i in "12345" %}
+      <label class="star">
+        <input type="radio" name="valeur_notes" value="{{ i }}" class="hidden" required />
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 transition fill-gray-300" viewBox="0 0 20 20">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.18 3.637a1 1 0 00.95.69h3.821c.969 0 1.371 1.24.588 1.81l-3.09 2.24a1 1 0 00-.364 1.118l1.18 3.637c.3.921-.755 1.688-1.54 1.118l-3.09-2.24a1 1 0 00-1.175 0l-3.09 2.24c-.784.57-1.838-.197-1.54-1.118l1.18-3.637a1 1 0 00-.364-1.118l-3.09-2.24c-.784-.57-.38-1.81.588-1.81h3.821a1 1 0 00.95-.69l1.18-3.637z" />
+        </svg>
+      </label>
+      {% endfor %}
+    </div>
+
+    <div class="text-right mt-4">
+      <button type="submit" class="px-4 py-2 bg-accent text-white font-semibold rounded-md hover:bg-pink-500 transition">
+        Rate
+      </button>
+    </div>
+  </form>
+</div>
+<script>
+  const stars = [...document.querySelectorAll('#star-rating .star')];
+
+  stars.forEach((label, index) => {
+    label.addEventListener('click', () => {
+      // Reset toutes les étoiles
+      stars.forEach(star => {
+        star.querySelector('svg').classList.remove('fill-pink-500');
+        star.querySelector('svg').classList.add('fill-gray-300');
+      });
+
+      // Colorie les étoiles jusqu'à celle cliquée
+      for (let i = 0; i <= index; i++) {
+        stars[i].querySelector('svg').classList.remove('fill-gray-300');
+        stars[i].querySelector('svg').classList.add('fill-pink-500');
+      }
+    });
+  });
+</script>
+
+
+{% if moyenne %}
+<div class="mt-6 text-sm text-gray-700">
+  <p class="mb-1">Average :</p>
+  <div class="flex items-center gap-1">
+    {% for i in "1,2,3,4,5"|cut:"," %}
+      {% with i_int=i|add:"0" %}
+        {% if moyenne >= i_int %}
+          <!-- Cœur plein -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
+            <path style="fill:#ec4899;" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+              2 6 4 4 6.5 4c1.74 0 3.41 1.1 4.13 2.59h.75C13.09 5.1 14.76 4 16.5 4 
+              19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        {% elif moyenne >= i_int|add:"-0.5" %}
+          <!-- Demi-cœur -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
+            <defs>
+              <linearGradient id="halfHeart{{ forloop.counter }}" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="50%" stop-color="#ec4899"/>
+                <stop offset="50%" stop-color="#d1d5db"/>
+              </linearGradient>
+            </defs>
+            <path style="fill:url(#halfHeart{{ forloop.counter }});" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+              2 6 4 4 6.5 4c1.74 0 3.41 1.1 4.13 2.59h.75C13.09 5.1 14.76 4 16.5 4 
+              19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        {% else %}
+          <!-- Cœur vide -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
+            <path style="fill:#d1d5db;" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+              2 6 4 4 6.5 4c1.74 0 3.41 1.1 4.13 2.59h.75C13.09 5.1 14.76 4 16.5 4 
+              19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        {% endif %}
+      {% endwith %}
+    {% endfor %}
+    <span class="ml-2 text-sm text-gray-500">({{ moyenne|floatformat:1 }}/5)</span>
+  </div>
+</div>
+{% endif %}
+
+
+
 
   <!-- Commentaires -->
   <div class="mt-10">
@@ -46,13 +135,12 @@
     <form action="{% url 'add_comments' recette.id %}" method="POST" class="bg-gray-50 p-4 rounded-xl shadow-sm space-y-4">
       {% csrf_token %}
       <label for="comment" class="block text-sm font-medium text-gray-700">Leave a comment :</label>
-      <textarea id="comment" name="contenu_com" rows="4" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent" placeholder="Écrivez votre commentaire ici..."></textarea>
+      <textarea id="comment" name="contenu_com" rows="4" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent" placeholder="Write your comments here..."></textarea>
       <div class="text-right">
-        <button type="submit" class="px-4 py-2 bg-accent text-white font-semibold rounded-md hover:bg-pink-500 transition">Envoyer</button>
+        <button type="submit" class="px-4 py-2 bg-accent text-white font-semibold rounded-md hover:bg-pink-500 transition">Send</button>
       </div>
     </form>
-
-    <!-- Liste des commentaires -->
+     <!-- Liste des commentaires -->
     <div class="mt-6 space-y-4">
       {% for commentaire in commentaires %}
         <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
@@ -66,34 +154,7 @@
       {% endfor %}
     </div>
   </div>
-
-<form action="{% url 'rating' recette.id %}" method="POST" class="bg-gray-50 p-4 rounded-xl shadow-sm space-y-4">
-  {% csrf_token %}
   
-  <label for="note" class="block text-sm font-medium text-gray-700">Note (sur 5) :</label>
-  <input
-    type="number"
-    name="valeur_notes"
-    id="note"
-    min="1"
-    max="5"
-    required
-    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
-    placeholder="Ex: 4"
-  />
-
-  <div class="text-right mt-4">
-    <button type="submit" class="px-4 py-2 bg-accent text-white font-semibold rounded-md hover:bg-pink-500 transition">
-      Noter
-    </button>
-  </div>
-</form>
-
-  {% for rating in ratings %}
-  <p class="text-gray-800">Note : {{ rating.valeur_notes }}</p>
-{% endfor %}
-
-
 
   <!-- Boutons Modifier / Supprimer -->
   {% if source == "my_recipes" %}
@@ -109,6 +170,3 @@
 
 </div>
 {% endblock %}
-
-
-

@@ -31,7 +31,16 @@ def create_recipes(request): #demande envoyée par l'user au serveur
 def recipe_details(request, id):
      recette = get_object_or_404(Recettes, id=id)
      commentaires = recette.commentaires_set.all() #donne moi tous les commentaires lié à cette recette
-     return render(request, 'recipes_details.html', {'recette': recette, 'commentaires': commentaires, 'rating' : rating}) #dictionnaire = variable a utiliser dans le template
+     notes = list(recette.notes_set.all())
+     total = 0
+     for note in notes :
+          total+= note.valeur_notes
+     if len(notes) == 0:
+          moyenne = 0
+     else :  
+          moyenne = round(total/len(notes),1)
+     print(len(notes))
+     return render(request, 'recipes_details.html', {'recette': recette, 'commentaires': commentaires, 'notes' : notes, 'moyenne' :moyenne}) #dictionnaire = variable a utiliser dans le template
 
 @login_required
 def my_recipes(request):
@@ -78,6 +87,7 @@ def add_comments(request, recette_id): #identifiant de la recette ciblé
 @login_required
 def rating(request,recette_id):
      recette = Recettes.objects.get(id=recette_id)
+     
      if request.method == "POST":
           form = Notes(request.POST)
           print(form)
