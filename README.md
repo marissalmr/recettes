@@ -1,5 +1,5 @@
 # recettes
-![Python](https://img.shields.io/badge/Python-3.13.1-blue)
+![Python](https://img.shields.io/badge/Python-3.13.1-pink)
 ![Django](https://img.shields.io/badge/Django-5.1.7-green)
 ![Status](https://img.shields.io/badge/Status-En%20développement-orange)
 Stage - 1ére année
