@@ -1,6 +1,6 @@
 # recettes
-![Python](https://img.shields.io/badge/Python-3.10-blue)
-![Django](https://img.shields.io/badge/Django-4.2-green)
+![Python](https://img.shields.io/badge/Python-3.13.1-blue)
+![Django](https://img.shields.io/badge/Django-5.1.7-green)
 ![Status](https://img.shields.io/badge/Status-En%20développement-orange)
 Stage - 1ére année
 # Crumble Kiss – Une plateforme gourmande pour créer, partager et noter vos recettes
