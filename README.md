@@ -2,7 +2,7 @@
 ![Python](https://img.shields.io/badge/Python-3.13.1-pink)
 ![Django](https://img.shields.io/badge/Django-5.1.7-blue)
 ![Status](https://img.shields.io/badge/Status-En%20développement-purple)
-Stage - 1ére année
+
 # Crumble Kiss – Une plateforme gourmande pour créer, partager et noter vos recettes
 
 L’application propose une expérience utilisateur complète : 
