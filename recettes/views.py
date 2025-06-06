@@ -1,8 +1,13 @@
+from django.http import HttpResponseForbidden
 from . import forms
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Recettes
 from .forms import Comments, Notes
+from functools import wraps
+from .decorators import (
+     one_comments_only
+)
 
 
 @login_required #Peut pas y accèder si t'es pas connecter 
@@ -21,17 +26,26 @@ def create_recipes(request): #demande envoyée par l'user au serveur
           if form.is_valid():
               recipe = form.save(commit=False) #Crée l'objet recette en mémoire (avec les données du formulaire) mais ne l'enregistre pas encore en BDD car il manque le champ user
               recipe.user = request.user #« Cette recette a été créée par l’utilisateur actuellement connecté »
-              recipe.save() #Et mtn qu'on a tout ce dont on a besoin, on enregistre l'objet complet (avec le user) en BDD
+              recipe.save() #Et mtn qu'on a tout ce dont ron a besoin, on enregistre l'objet complet (avec le user) en BDD
               return redirect('home_page')
           if request.method == "GET":
                form = forms.Creation()
      return render(request, 'recipes_creation.html', {'form': form}) #Que le formulaire soit envoyée ou pas, on affiche la page HTML avec le formulaire
 
+@one_comments_only()
 @login_required 
 def recipe_details(request, id):
      recette = get_object_or_404(Recettes, id=id)
      commentaires = recette.commentaires_set.all() #donne moi tous les commentaires lié à cette recette
-     notes = list(recette.notes_set.all())
+     notes = recette.notes_set.all()
+     
+     note_limite = notes.filter(user=request.user)
+     if note_limite:
+          user_have_rating = True 
+     else:
+          user_have_rating = False
+
+     print(note_limite)
      total = 0
      for note in notes :
           total+= note.valeur_notes
@@ -40,7 +54,7 @@ def recipe_details(request, id):
      else :  
           moyenne = round(total/len(notes),1)
      print(len(notes))
-     return render(request, 'recipes_details.html', {'recette': recette, 'commentaires': commentaires, 'notes' : notes, 'moyenne' :moyenne}) #dictionnaire = variable a utiliser dans le template
+     return render(request, 'recipes_details.html', {'recette': recette, 'commentaires': commentaires, 'notes' : notes, 'moyenne' :moyenne , 'user_have_rating' : user_have_rating}) #dictionnaire = variable a utiliser dans le template
 
 @login_required
 def my_recipes(request):
@@ -84,7 +98,7 @@ def add_comments(request, recette_id): #identifiant de la recette ciblé
         return render(request, "recipes_details.html")
     
 
-@login_required
+@login_required #créer
 def rating(request,recette_id):
      recette = Recettes.objects.get(id=recette_id)
      
@@ -99,3 +113,17 @@ def rating(request,recette_id):
                return redirect("home_page")
      return render(request, "recipes_detail.html")
           
+def one_note_only():
+     def decorator(view):
+          @wraps(view)
+          def __wrapped_view(request, *args, **kwargs):
+               print("ici")
+               return view(request, *args, **kwargs)
+          return __wrapped_view
+     return decorator
+
+
+
+
+
+               

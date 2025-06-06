@@ -38,6 +38,8 @@
     </p>
   </div>
 <!-- Notation par étoiles -->
+             {% if not user_have_rating %}
+
 <div class="mt-10">
   <h2 class="text-xl font-semibold text-chocolate mb-4">Leave a rating</h2>
 
@@ -81,6 +83,7 @@
     });
   });
 </script>
+      {% endif %}
 
 
 {% if moyenne %}
