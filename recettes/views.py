@@ -51,7 +51,6 @@ def recipe_details(request, id):
           moyenne = 0
      else :  
           moyenne = round(total/len(notes),1)
-     print(len(notes))
      return render(request, 'recipes_details.html', {'recette': recette, 'commentaires': commentaires, 'notes' : notes, 'moyenne' :moyenne , 'user_have_rating' : user_have_rating}) #dictionnaire = variable a utiliser dans le template
 
 @login_required
