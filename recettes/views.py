@@ -1,13 +1,12 @@
 from django.http import HttpResponseForbidden
+
+from .decorators import one_rating_only
 from . import forms
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Recettes
 from .forms import Comments, Notes
-from functools import wraps
-from .decorators import (
-     one_comments_only
-)
+
 
 
 @login_required #Peut pas y accèder si t'es pas connecter 
@@ -32,7 +31,6 @@ def create_recipes(request): #demande envoyée par l'user au serveur
                form = forms.Creation()
      return render(request, 'recipes_creation.html', {'form': form}) #Que le formulaire soit envoyée ou pas, on affiche la page HTML avec le formulaire
 
-@one_comments_only()
 @login_required 
 def recipe_details(request, id):
      recette = get_object_or_404(Recettes, id=id)
@@ -98,7 +96,8 @@ def add_comments(request, recette_id): #identifiant de la recette ciblé
         return render(request, "recipes_details.html")
     
 
-@login_required #créer
+@login_required
+@one_rating_only
 def rating(request,recette_id):
      recette = Recettes.objects.get(id=recette_id)
      
@@ -113,14 +112,7 @@ def rating(request,recette_id):
                return redirect("home_page")
      return render(request, "recipes_detail.html")
           
-def one_note_only():
-     def decorator(view):
-          @wraps(view)
-          def __wrapped_view(request, *args, **kwargs):
-               print("ici")
-               return view(request, *args, **kwargs)
-          return __wrapped_view
-     return decorator
+
 
 
 
