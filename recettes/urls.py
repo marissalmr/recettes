@@ -1,6 +1,8 @@
 from django.urls import path
-
+from django.conf import settings
 from recettes import views
+from django.conf.urls.static import static
+
 
 
 urlpatterns = [
@@ -14,4 +16,4 @@ urlpatterns = [
     path('rating/<recette_id>/', views.rating, name='rating')
 
 
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

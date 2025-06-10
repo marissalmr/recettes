@@ -1,5 +1,6 @@
+import os
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseForbidden
-
 from .decorators import one_rating_only
 from . import forms
 from django.shortcuts import render, redirect, get_object_or_404
@@ -17,6 +18,13 @@ def home_page(request):
      }
      return render(request, 'homepage.html', context=context )
 
+def validate_files(value):
+     print(value)
+     if value.content_type != "image/png" and value.content_type != "image/jpg"  and value.content_type != "image/jpeg":
+          print(value.content_type)
+
+          raise ValidationError('File not supported')
+     
 @login_required
 def create_recipes(request): #demande envoyée par l'user au serveur
      form = forms.Creation() #Formulaire vide
@@ -25,12 +33,27 @@ def create_recipes(request): #demande envoyée par l'user au serveur
           if form.is_valid():
               recipe = form.save(commit=False) #Crée l'objet recette en mémoire (avec les données du formulaire) mais ne l'enregistre pas encore en BDD car il manque le champ user
               recipe.user = request.user #« Cette recette a été créée par l’utilisateur actuellement connecté »
+              pictures = request.FILES["filename"] 
+              print(pictures.content_type)
               recipe.save() #Et mtn qu'on a tout ce dont ron a besoin, on enregistre l'objet complet (avec le user) en BDD
-              return redirect('home_page')
-          if request.method == "GET":
-               form = forms.Creation()
-     return render(request, 'recipes_creation.html', {'form': form}) #Que le formulaire soit envoyée ou pas, on affiche la page HTML avec le formulaire
+             
+              newpath = "C:\\stage\\recette\\recettes\\media\\upload\\" + f"{recipe.id}"
+              if not os.path.exists(newpath):
+                   os.makedirs(newpath)
+              try : 
+                    validate_files(pictures)
+                    print(pictures)
+              except ValidationError:
+                    return HttpResponseForbidden()
+              with open(f"{newpath}/name.jpg", "wb+") as destination: #w:écriture (écrase le fichier s’il existe), b : mode binaire (important pour les fichiers non-texte comme les images), + :lecture + écriture (pas toujours nécessaire ici, mais parfois utile).
+                    for chunk in pictures.chunks():
+                         destination.write(chunk) #Chunk permet de diviser l'image pour pas que ce soit trop gros
 
+                         return redirect('home_page')
+
+     return render(request, 'recipes_creation.html', {'form': form}) #Que le formulaire soit envoyée ou pas, on affiche la page HTML avec le formulaire
+ 
+    
 @login_required 
 def recipe_details(request, id):
      recette = get_object_or_404(Recettes, id=id)
@@ -102,7 +125,6 @@ def rating(request,recette_id):
      
      if request.method == "POST":
           form = Notes(request.POST)
-          print(form)
           if form.is_valid():
                notes = form.save(commit=False)
                notes.recettes = recette
