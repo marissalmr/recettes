@@ -8,8 +8,6 @@ from django.contrib.auth.decorators import login_required
 from .models import Recettes
 from .forms import Comments, Notes
 
-
-
 @login_required #Peut pas y accèder si t'es pas connecter 
 def home_page(request):
      all_recette= Recettes.objects.all()
@@ -19,10 +17,7 @@ def home_page(request):
      return render(request, 'homepage.html', context=context )
 
 def validate_files(value):
-     print(value)
-     if value.content_type != "image/png" and value.content_type != "image/jpg"  and value.content_type != "image/jpeg":
-          print(value.content_type)
-
+     if value.content_type != "image/png" and value.content_type != "image/jpg" and value.content_type != "image/jpeg":
           raise ValidationError('File not supported')
      
 @login_required
@@ -37,7 +32,7 @@ def create_recipes(request): #demande envoyée par l'user au serveur
               print(pictures.content_type)
               recipe.save() #Et mtn qu'on a tout ce dont ron a besoin, on enregistre l'objet complet (avec le user) en BDD
              
-              newpath = "C:\\stage\\recette\\recettes\\media\\upload\\" + f"{recipe.id}"
+              newpath = "C:\\stage\\recette\\media\\upload\\" + f"{recipe.id}"
               if not os.path.exists(newpath):
                    os.makedirs(newpath)
               try : 
