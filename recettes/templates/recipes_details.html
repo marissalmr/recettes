@@ -1,0 +1,192 @@
+{% include 'includes/navbar.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto mt-10 bg-white rounded-2xl shadow-lg p-8 space-y-6">
+
+  <h1 class="text-3xl font-bold text-accent">{{ recette.recipe_title }}</h1>
+
+  <div class="flex items-center flex-wrap gap-4 text-sm text-gray-600 mt-4">
+    <div class="flex items-center gap-2">
+      <span class="text-pink-500">⏱</span>
+      <span>{{ recette.time_in_minutes }} minutes</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-blue-500">📂</span>
+      <span>{{ recette.category_choices }}</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-green-500">👤</span>
+      <span>Par : {{ recette.user.username }}</span>
+    </div>
+  </div>
+
+  <div>
+    <h2 class="text-xl font-semibold text-chocolate mb-2">Ingrédients</h2>
+    <p class="text-gray-700 leading-relaxed whitespace-pre-line">
+      {{ recette.ingredients_list }}
+    </p>
+  </div>
+
+  <!-- Section photo corrigée -->
+  {% if recette.image %}
+  <div>
+    <h2 class="text-xl font-semibold text-chocolate mb-2">Photo</h2>
+    <div class="text-gray-700 leading-relaxed">
+      <img src="{{ recette.image.url }}" alt="{{ recette.recipe_title }}" class="w-full max-w-md mx-auto rounded-lg shadow-md">
+    </div>
+  </div>
+  {% endif %}
+
+  <div>
+    <h2 class="text-xl font-semibold text-chocolate mb-2">Préparation</h2>
+    <p class="text-gray-700 leading-relaxed whitespace-pre-line">
+      {{ recette.preparation_steps }}
+    </p>
+  </div>
+
+  <!-- Notation par étoiles -->
+  {% if not user_have_rating %}
+  <div class="mt-10">
+    <h2 class="text-xl font-semibold text-chocolate mb-4">Leave a rating</h2>
+
+    <form action="{% url 'rating' recette.id %}" method="POST" class="bg-gray-50 p-4 rounded-xl shadow-sm space-y-4">
+      {% csrf_token %}
+
+      <div class="flex items-center gap-1" id="star-rating">
+        {% for i in "12345" %}
+        <label class="star cursor-pointer">
+          <input type="radio" name="valeur_notes" value="{{ i }}" class="hidden" required />
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 transition fill-gray-300 hover:fill-pink-400" viewBox="0 0 20 20">
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.18 3.637a1 1 0 00.95.69h3.821c.969 0 1.371 1.24.588 1.81l-3.09 2.24a1 1 0 00-.364 1.118l1.18 3.637c.3.921-.755 1.688-1.54 1.118l-3.09-2.24a1 1 0 00-1.175 0l-3.09 2.24c-.784.57-1.838-.197-1.54-1.118l1.18-3.637a1 1 0 00-.364-1.118l-3.09-2.24c-.784-.57-.38-1.81.588-1.81h3.821a1 1 0 00.95-.69l1.18-3.637z" />
+          </svg>
+        </label>
+        {% endfor %}
+      </div>
+
+      <div class="text-right mt-4">
+        <button type="submit" class="px-4 py-2 bg-accent text-white font-semibold rounded-md hover:bg-pink-500 transition">
+          Rate
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const stars = [...document.querySelectorAll('#star-rating .star')];
+
+      stars.forEach((label, index) => {
+        label.addEventListener('click', () => {
+          // Reset toutes les étoiles
+          stars.forEach(star => {
+            star.querySelector('svg').classList.remove('fill-pink-500');
+            star.querySelector('svg').classList.add('fill-gray-300');
+          });
+
+          // Colorie les étoiles jusqu'à celle cliquée
+          for (let i = 0; i <= index; i++) {
+            stars[i].querySelector('svg').classList.remove('fill-gray-300');
+            stars[i].querySelector('svg').classList.add('fill-pink-500');
+          }
+        });
+
+        // Effet hover
+        label.addEventListener('mouseenter', () => {
+          for (let i = 0; i <= index; i++) {
+            stars[i].querySelector('svg').classList.add('fill-pink-400');
+          }
+        });
+
+        label.addEventListener('mouseleave', () => {
+          stars.forEach(star => {
+            star.querySelector('svg').classList.remove('fill-pink-400');
+          });
+        });
+      });
+    });
+  </script>
+  {% endif %}
+
+  <!-- Affichage de la moyenne -->
+  {% if moyenne %}
+  <div class="mt-6 text-sm text-gray-700">
+    <p class="mb-1">Average :</p>
+    <div class="flex items-center gap-1">
+      {% for i in "12345" %}
+        {% if moyenne >= i|add:"0" %}
+          <!-- Cœur plein -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
+            <path style="fill:#ec4899;" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+              2 6 4 4 6.5 4c1.74 0 3.41 1.1 4.13 2.59h.75C13.09 5.1 14.76 4 16.5 4 
+              19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        {% elif moyenne >= i|add:"-0.5" %}
+          <!-- Demi-cœur -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
+            <defs>
+              <linearGradient id="halfHeart{{ forloop.counter }}" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="50%" stop-color="#ec4899"/>
+                <stop offset="50%" stop-color="#d1d5db"/>
+              </linearGradient>
+            </defs>
+            <path style="fill:url(#halfHeart{{ forloop.counter }});" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+              2 6 4 4 6.5 4c1.74 0 3.41 1.1 4.13 2.59h.75C13.09 5.1 14.76 4 16.5 4 
+              19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        {% else %}
+          <!-- Cœur vide -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
+            <path style="fill:#d1d5db;" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+              2 6 4 4 6.5 4c1.74 0 3.41 1.1 4.13 2.59h.75C13.09 5.1 14.76 4 16.5 4 
+              19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        {% endif %}
+      {% endfor %}
+      <span class="ml-2 text-sm text-gray-500">({{ moyenne|floatformat:1 }}/5)</span>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Commentaires -->
+  <div class="mt-10">
+    <h2 class="text-xl font-semibold text-chocolate mb-4">Comments</h2>
+
+    <!-- Formulaire -->
+    <form action="{% url 'add_comments' recette.id %}" method="POST" class="bg-gray-50 p-4 rounded-xl shadow-sm space-y-4">
+      {% csrf_token %}
+      <label for="comment" class="block text-sm font-medium text-gray-700">Leave a comment :</label>
+      <textarea id="comment" name="contenu_com" rows="4" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent" placeholder="Write your comments here..." required></textarea>
+      <div class="text-right">
+        <button type="submit" class="px-4 py-2 bg-accent text-white font-semibold rounded-md hover:bg-pink-500 transition">Send</button>
+      </div>
+    </form>
+
+    <!-- Liste des commentaires -->
+    <div class="mt-6 space-y-4">
+      {% for commentaire in commentaires %}
+        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+          <p class="text-gray-800">{{ commentaire.contenu_com }}</p>
+          {% if commentaire.user %}
+            <p class="text-xs text-gray-400 mt-2">Posted by {{ commentaire.user.username }} le {{ commentaire.date_publication|date:"d M Y à H:i" }}</p>
+          {% endif %}
+        </div>
+      {% empty %}
+        <p class="text-gray-500">No comments yet. Be the first to leave one!</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Boutons Modifier / Supprimer -->
+  {% if source == "my_recipes" %}
+  <div class="flex gap-4 pt-6 border-t border-gray-200">
+    <a href="{% url 'update_recipes' recette.id %}" class="text-blue-600 underline hover:text-blue-800 transition">Update recipes</a>
+
+    <form method="POST" action="{% url 'delete_recipes' recette.id %}" onsubmit="return confirm('Are you sure you want to delete this recipe?');">
+      {% csrf_token %}
+      <button type="submit" class="text-red-600 underline hover:text-red-800 transition">Delete recipes</button>
+    </form>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

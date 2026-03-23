@@ -1,6 +1,126 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+import os
+from django.core.exceptions import ValidationError
+from django.http import HttpResponseForbidden
+from .decorators import one_rating_only
+from . import forms
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Recettes
+from .forms import Comments, Notes
 
-def index(request):
-    return HttpResponse("Hello World")
-# Create your views here.
+@login_required #Peut pas y accèder si t'es pas connecter 
+def home_page(request):
+     all_recette= Recettes.objects.all()
+     context = {
+        'recettes' : all_recette,
+     }
+     return render(request, 'homepage.html', context=context )
+
+def validate_files(value):
+     if value.content_type != "image/png" and value.content_type != "image/jpg" and value.content_type != "image/jpeg":
+          raise ValidationError('File not supported')
+     
+@login_required
+def create_recipes(request): #demande envoyée par l'user au serveur
+     form = forms.Creation() #Formulaire vide
+     if request.method == "POST": #L'utilisateur envoie des données
+          form = forms.Creation(request.POST, request.FILES) #On remplit le formulaire avec les données envoyées par l'utilisateur (request.POST pour les champs classiques et request.FILES pour les fichiers)
+          if form.is_valid():
+              recipe = form.save(commit=False) #Crée l'objet recette en mémoire (avec les données du formulaire) mais ne l'enregistre pas encore en BDD car il manque le champ user
+              recipe.user = request.user #« Cette recette a été créée par l’utilisateur actuellement connecté »
+              
+              if "filename" in request.FILES: #Si l'utilisateur a envoyé une image (le champ de l'image s'appelle "filename")
+                    recipe.image = request.FILES["filename"] #On associe l'image à la recette (en mémoire pour le moment)
+            
+              recipe.save() #Et mtn qu'on a tout ce dont ron a besoin, on enregistre l'objet complet (avec le user) en BDD
+              return redirect('home_page')
+
+     return render(request, 'recipes_creation.html', {'form': form}) #Que le formulaire soit envoyée ou pas, on affiche la page HTML avec le formulaire
+ 
+    
+@login_required 
+def recipe_details(request, id):
+     recette = get_object_or_404(Recettes, id=id)
+     commentaires = recette.commentaires_set.all() #donne moi tous les commentaires lié à cette recette
+     notes = recette.notes_set.all()
+     
+     note_limite = notes.filter(user=request.user)
+     if note_limite:
+          user_have_rating = True 
+     else:
+          user_have_rating = False
+
+     print(note_limite)
+     total = 0
+     for note in notes :
+          total+= note.valeur_notes
+     if len(notes) == 0:
+          moyenne = 0
+     else :  
+          moyenne = round(total/len(notes),1)
+     return render(request, 'recipes_details.html', {'recette': recette, 'commentaires': commentaires, 'notes' : notes, 'moyenne' :moyenne , 'user_have_rating' : user_have_rating}) #dictionnaire = variable a utiliser dans le template
+
+@login_required
+def my_recipes(request):
+     mes_recettes = Recettes.objects.filter(user=request.user)
+     return render(request, 'homepage.html', {'recettes': mes_recettes, 'source': 'my_recipes', "source2": "delete"})
+
+@login_required
+def recipe_update(request, id_from_url):
+     recette = get_object_or_404(Recettes,id=id_from_url, user=request.user) #id = id de la recette qu'on veut affichert via l'url et elle doit appartenir à l'utilisateur connécté
+     if request.method == "GET":
+          form = forms.Creation(instance=recette)
+          return render(request, 'recipes_creation.html', {'form': form} )
+     if request.method == "POST":
+          form = forms.Creation(request.POST, instance=recette)
+          if form.is_valid():
+              recipe = form.save()
+          return redirect('home_page')
+    
+@login_required
+def recipe_delete(request, id_from_url): #Identifiant de la recette à supprimer transmis depuis l'url pour pas supprimer les autres qui ne viennent pas de nous
+     mes_recette = get_object_or_404(Recettes, id=id_from_url, user=request.user) #On récuppere l'objet recette qui à le bon identifiant et qui a été crée par l'utilisateur connécté
+     if request.method == "POST": #Pas de delete car le HTML ne traite que des GET (via <a>) et des POST via <form method="POST"> 
+          mes_recette.delete()
+
+          #return render(request, 'homepage.html', {'recettes': rafraichissement_page, 'source2': 'delete_recipes'})
+
+     return redirect('my_recipes')
+
+@login_required
+def add_comments(request, recette_id): #identifiant de la recette ciblé
+    recette = Recettes.objects.get(id=recette_id) #Rattacher le commentaire a une recette précise via son id 
+
+    if request.method == "POST":
+        form = Comments(request.POST)
+        if form.is_valid():
+            commentaire = form.save(commit=False) #Foreign key pas demandé à l'user donc on met pas tout de suite en BDD pour le mettre juste en bas 
+            commentaire.recettes = recette #On associe le commentaire à la recette sélectionnée
+            commentaire.user = request.user #On associe le commentaire à l'utilisateur connécté
+            commentaire.save()
+            return redirect("home_page")
+        return render(request, "recipes_details.html")
+    
+
+@login_required
+@one_rating_only
+def rating(request,recette_id):
+     recette = Recettes.objects.get(id=recette_id)
+     
+     if request.method == "POST":
+          form = Notes(request.POST)
+          if form.is_valid():
+               notes = form.save(commit=False)
+               notes.recettes = recette
+               notes.user = request.user
+               notes.save()
+               return redirect("home_page")
+     return render(request, "recipes_detail.html")
+          
+
+
+
+
+
+
+               
