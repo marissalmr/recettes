@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authentification',
     'recettes' ,
-    'widget_tweaks'   
+    'widget_tweaks'  ,
+    'recettes.apps.Triggers' #pour que les signaux soient pris en compte
 ]
 
 MIDDLEWARE = [
