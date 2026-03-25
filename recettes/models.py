@@ -25,6 +25,7 @@ class Recettes(models.Model):
     category_choices = models.CharField(default="", choices=category_choices, max_length=60)
     time_in_minutes = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(300)])
     user = models.ForeignKey (User, on_delete=models.CASCADE) 
+    moyenne_notes = models.FloatField(default=0)
 
 
 class Notes(models.Model):
