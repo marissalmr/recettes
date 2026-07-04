@@ -83,7 +83,23 @@ python manage.py runserver
 http://127.0.0.1:8000/authentification/signup/
 ```
 
+## Aperçu du projet
 
+### Inscription
+![Sign up](inscription.png)
+*Formulaire d'inscription avec choix du niveau culinaire.*
+
+### Publication d'une recette
+![Publish recipe](creationrecette+.png)
+*Interface de création d'une recette avec gestion des allergènes et infos nutritionnelles.*
+
+### Liste des recettes
+![Liste des recettes](filrecettes.png)
+*Navigation principale et recettes publiées par la communauté.*
+
+### Détail d'une recette
+![Détail recette](appercurecettes.png)
+*Page recette avec ingrédients, photo, préparation, notation et commentaires.*
 
 
 
