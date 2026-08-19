@@ -1,182 +1,209 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ recette.recipe_title }} — Crumble Kiss{% endblock %}
+
+{% block body %}
 {% include 'includes/navbar.html' %}
 
-{% block content %}
-<div class="max-w-3xl mx-auto mt-10 bg-white rounded-2xl shadow-lg p-8 space-y-6">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <!-- Back link -->
+  <a href="{% url 'home_page' %}" class="inline-flex items-center gap-1.5 text-sm font-500 text-chocolate-400 hover:text-rose-600 transition-colors fade-in">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+    Back to recipes
+  </a>
 
-  <!-- Titre -->
-  <h1 class="text-3xl font-bold text-accent">{{ recette.recipe_title }}</h1>
-
-  <!-- Infos recette -->
-  <div class="flex items-center flex-wrap gap-4 text-sm text-gray-600 mt-4">
-    <div class="flex items-center gap-2">
-      <span class="text-pink-500">⏱</span>
-      <span>{{ recette.time_in_minutes }} minutes</span>
-    </div>
-    <div class="flex items-center gap-2">
-      <span class="text-blue-500">📂</span>
-      <span>{{ recette.category_choices }}</span>
-    </div>
-    <div class="flex items-center gap-2">
-      <span class="text-green-500">👤</span>
-      <span>Par : {{ recette.user.username }}</span>
-    </div>
-  </div>
-
-  <!-- Ingrédients -->
-  <div>
-    <h2 class="text-xl font-semibold text-chocolate mb-2">Ingrédients</h2>
-    <p class="text-gray-700 leading-relaxed whitespace-pre-line">
-      {{ recette.ingredients_list }}
-    </p>
-  </div>
-
-   <div>
-    <h2 class="text-xl font-semibold text-chocolate mb-2">photo</h2>
-    <p class="text-gray-700 leading-relaxed whitespace-pre-line">
-     <img src="/media/upload/44/name.jpg" alt="Italian Trulli">
-    </p>
-  </div>
-
-  <!-- Étapes de préparation -->
-  <div>
-    <h2 class="text-xl font-semibold text-chocolate mb-2">Préparation</h2>
-    <p class="text-gray-700 leading-relaxed whitespace-pre-line">
-      {{ recette.preparation_steps }}
-    </p>
-  </div>
-<!-- Notation par étoiles -->
-             {% if not user_have_rating %}
-
-<div class="mt-10">
-  <h2 class="text-xl font-semibold text-chocolate mb-4">Leave a rating</h2>
-
-  <form action="{% url 'rating' recette.id %}" method="POST" class="bg-gray-50 p-4 rounded-xl shadow-sm space-y-4">
-    {% csrf_token %}
-
-    <div class="flex items-center gap-1" id="star-rating">
-      {% for i in "12345" %}
-      <label class="star">
-        <input type="radio" name="valeur_notes" value="{{ i }}" class="hidden" required />
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 transition fill-gray-300" viewBox="0 0 20 20">
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.18 3.637a1 1 0 00.95.69h3.821c.969 0 1.371 1.24.588 1.81l-3.09 2.24a1 1 0 00-.364 1.118l1.18 3.637c.3.921-.755 1.688-1.54 1.118l-3.09-2.24a1 1 0 00-1.175 0l-3.09 2.24c-.784.57-1.838-.197-1.54-1.118l1.18-3.637a1 1 0 00-.364-1.118l-3.09-2.24c-.784-.57-.38-1.81.588-1.81h3.821a1 1 0 00.95-.69l1.18-3.637z" />
-        </svg>
-      </label>
-      {% endfor %}
+  <!-- Hero card -->
+  <article class="mt-6 bg-white rounded-3xl shadow-xl ring-1 ring-rose-50 overflow-hidden fade-in">
+    <!-- Image header -->
+    <div class="relative h-64 bg-gradient-to-br from-rose-200 via-rose-100 to-chocolate-100 overflow-hidden">
+      <div class="absolute inset-0 flex items-center justify-center">
+        <span class="font-display text-8xl font-500 text-rose-300/60 select-none">{{ recette.recipe_title|first|upper }}</span>
+      </div>
+      <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/30 to-transparent">
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="px-3 py-1 bg-white/90 backdrop-blur text-xs font-600 text-rose-600 rounded-full uppercase tracking-wide">{{ recette.category_choices }}</span>
+          <span class="flex items-center gap-1 px-3 py-1 bg-white/90 backdrop-blur text-xs font-600 text-chocolate-500 rounded-full">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            {{ recette.time_in_minutes }} min
+          </span>
+        </div>
+      </div>
     </div>
 
-    <div class="text-right mt-4">
-      <button type="submit" class="px-4 py-2 bg-accent text-white font-semibold rounded-md hover:bg-pink-500 transition">
-        Rate
-      </button>
-    </div>
-  </form>
-</div>
-<script>
-  const stars = [...document.querySelectorAll('#star-rating .star')];
+    <div class="p-8 lg:p-10">
+      <!-- Title & author -->
+      <h1 class="font-display text-4xl font-600 text-chocolate-700 leading-tight">{{ recette.recipe_title }}</h1>
+      <div class="mt-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-rose-300 to-rose-500 flex items-center justify-center text-white text-sm font-600">
+          {{ recette.user.username|first|upper }}
+        </div>
+        <div>
+          <p class="text-sm font-600 text-chocolate-600">{{ recette.user.username }}</p>
+          <p class="text-xs text-chocolate-300">Recipe author</p>
+        </div>
+      </div>
 
-  stars.forEach((label, index) => {
-    label.addEventListener('click', () => {
-      // Reset toutes les étoiles
-      stars.forEach(star => {
-        star.querySelector('svg').classList.remove('fill-pink-500');
-        star.querySelector('svg').classList.add('fill-gray-300');
-      });
-
-      // Colorie les étoiles jusqu'à celle cliquée
-      for (let i = 0; i <= index; i++) {
-        stars[i].querySelector('svg').classList.remove('fill-gray-300');
-        stars[i].querySelector('svg').classList.add('fill-pink-500');
-      }
-    });
-  });
-</script>
+      <!-- Description -->
+      {% if recette.short_description %}
+      <p class="mt-6 text-lg text-chocolate-500 leading-relaxed italic border-l-4 border-rose-200 pl-4">{{ recette.short_description }}</p>
       {% endif %}
 
-
-{% if moyenne %}
-<div class="mt-6 text-sm text-gray-700">
-  <p class="mb-1">Average :</p>
-  <div class="flex items-center gap-1">
-    {% for i in "1,2,3,4,5"|cut:"," %}
-      {% with i_int=i|add:"0" %}
-        {% if moyenne >= i_int %}
-          <!-- Cœur plein -->
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
-            <path style="fill:#ec4899;" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
-              2 6 4 4 6.5 4c1.74 0 3.41 1.1 4.13 2.59h.75C13.09 5.1 14.76 4 16.5 4 
-              19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-          </svg>
-        {% elif moyenne >= i_int|add:"-0.5" %}
-          <!-- Demi-cœur -->
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
-            <defs>
-              <linearGradient id="halfHeart{{ forloop.counter }}" x1="0" x2="1" y1="0" y2="0">
-                <stop offset="50%" stop-color="#ec4899"/>
-                <stop offset="50%" stop-color="#d1d5db"/>
-              </linearGradient>
-            </defs>
-            <path style="fill:url(#halfHeart{{ forloop.counter }});" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
-              2 6 4 4 6.5 4c1.74 0 3.41 1.1 4.13 2.59h.75C13.09 5.1 14.76 4 16.5 4 
-              19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-          </svg>
-        {% else %}
-          <!-- Cœur vide -->
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
-            <path style="fill:#d1d5db;" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
-              2 6 4 4 6.5 4c1.74 0 3.41 1.1 4.13 2.59h.75C13.09 5.1 14.76 4 16.5 4 
-              19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-          </svg>
-        {% endif %}
-      {% endwith %}
-    {% endfor %}
-    <span class="ml-2 text-sm text-gray-500">({{ moyenne|floatformat:1 }}/5)</span>
-  </div>
-</div>
-{% endif %}
-
-
-
-
-  <!-- Commentaires -->
-  <div class="mt-10">
-    <h2 class="text-xl font-semibold text-chocolate mb-4">Comments</h2>
-
-    <!-- Formulaire -->
-    <form action="{% url 'add_comments' recette.id %}" method="POST" class="bg-gray-50 p-4 rounded-xl shadow-sm space-y-4">
-      {% csrf_token %}
-      <label for="comment" class="block text-sm font-medium text-gray-700">Leave a comment :</label>
-      <textarea id="comment" name="contenu_com" rows="4" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent" placeholder="Write your comments here..."></textarea>
-      <div class="text-right">
-        <button type="submit" class="px-4 py-2 bg-accent text-white font-semibold rounded-md hover:bg-pink-500 transition">Send</button>
-      </div>
-    </form>
-     <!-- Liste des commentaires -->
-    <div class="mt-6 space-y-4">
-      {% for commentaire in commentaires %}
-        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-          <p class="text-gray-800">{{ commentaire.contenu_com }}</p>
-          {% if commentaire.user %}
-            <p class="text-xs text-gray-400 mt-2">Posted by {{commentaire.user.username}} le {{ commentaire.date_publication|date:"d M Y à H:i" }}</p>
-          {% endif %}
+      <!-- Rating summary -->
+      {% if moyenne %}
+      <div class="mt-8 flex items-center gap-4 p-4 bg-rose-50/50 rounded-2xl">
+        <div class="flex items-center gap-1">
+          {% for i in "1,2,3,4,5"|cut:"," %}
+            {% with i_int=i|add:"0" %}
+              {% if moyenne >= i_int %}
+                <svg class="w-6 h-6" viewBox="0 0 24 24"><path style="fill:#e0427a;" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 1.1 4.13 2.59h.75C13.09 5.1 14.76 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              {% elif moyenne >= i_int|add:"-0.5" %}
+                <svg class="w-6 h-6" viewBox="0 0 24 24"><defs><linearGradient id="half{{ forloop.counter }}" x1="0" x2="1" y1="0" y2="0"><stop offset="50%" stop-color="#e0427a"/><stop offset="50%" stop-color="#e8d5cf"/></linearGradient></defs><path style="fill:url(#half{{ forloop.counter }});" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 1.1 4.13 2.59h.75C13.09 5.1 14.76 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              {% else %}
+                <svg class="w-6 h-6" viewBox="0 0 24 24"><path style="fill:#e8d5cf;" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 1.1 4.13 2.59h.75C13.09 5.1 14.76 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              {% endif %}
+            {% endwith %}
+          {% endfor %}
         </div>
-      {% empty %}
-        <p class="text-gray-500">No comments yet. Be the first to leave one!</p>
-      {% endfor %}
+        <div>
+          <p class="text-2xl font-display font-600 text-chocolate-700">{{ moyenne|floatformat:1 }}</p>
+          <p class="text-xs text-chocolate-400">{{ notes|length }} rating{{ notes|length|pluralize }}</p>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Content grid -->
+      <div class="mt-10 grid md:grid-cols-2 gap-8">
+        <!-- Ingredients -->
+        <div>
+          <h2 class="flex items-center gap-2 font-display text-xl font-600 text-chocolate-600 mb-4">
+            <span class="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center">
+              <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            </span>
+            Ingredients
+          </h2>
+          <div class="text-chocolate-500 leading-relaxed whitespace-pre-line text-sm">{{ recette.ingredients_list }}</div>
+        </div>
+
+        <!-- Steps -->
+        <div>
+          <h2 class="flex items-center gap-2 font-display text-xl font-600 text-chocolate-600 mb-4">
+            <span class="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center">
+              <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+            </span>
+            Preparation
+          </h2>
+          <div class="text-chocolate-500 leading-relaxed whitespace-pre-line text-sm">{{ recette.preparation_steps }}</div>
+        </div>
+      </div>
+
+      <!-- Rating form -->
+      {% if not user_have_rating %}
+      <div class="mt-10 p-6 bg-rose-50/50 rounded-2xl ring-1 ring-rose-100">
+        <h2 class="font-display text-xl font-600 text-chocolate-600 mb-4">Rate this recipe</h2>
+        <form action="{% url 'rating' recette.id %}" method="POST" class="flex items-center justify-between gap-4 flex-wrap">
+          {% csrf_token %}
+          <div class="flex items-center gap-1" id="star-rating">
+            {% for i in "12345" %}
+            <label class="star cursor-pointer">
+              <input type="radio" name="valeur_notes" value="{{ i }}" class="hidden" required />
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 transition fill-chocolate-200 hover:fill-rose-300" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.18 3.637a1 1 0 00.95.69h3.821c.969 0 1.371 1.24.588 1.81l-3.09 2.24a1 1 0 00-.364 1.118l1.18 3.637c.3.921-.755 1.688-1.54 1.118l-3.09-2.24a1 1 0 00-1.175 0l-3.09 2.24c-.784.57-1.838-.197-1.54-1.118l1.18-3.637a1 1 0 00-.364-1.118l-3.09-2.24c-.784-.57-.38-1.81.588-1.81h3.821a1 1 0 00.95-.69l1.18-3.637z" />
+              </svg>
+            </label>
+            {% endfor %}
+          </div>
+          <button type="submit" class="px-5 py-2.5 bg-rose-500 text-white font-600 rounded-xl hover:bg-rose-600 hover:shadow-lg hover:shadow-rose-200 transition-all">
+            Submit Rating
+          </button>
+        </form>
+      </div>
+      <script>
+        const stars = [...document.querySelectorAll('#star-rating .star')];
+        stars.forEach((label, index) => {
+          label.addEventListener('click', () => {
+            stars.forEach(star => {
+              star.querySelector('svg').classList.remove('fill-rose-500');
+              star.querySelector('svg').classList.add('fill-chocolate-200');
+            });
+            for (let i = 0; i <= index; i++) {
+              stars[i].querySelector('svg').classList.remove('fill-chocolate-200');
+              stars[i].querySelector('svg').classList.add('fill-rose-500');
+            }
+          });
+        });
+      </script>
+      {% endif %}
+
+      <!-- Comments -->
+      <div class="mt-10">
+        <h2 class="flex items-center gap-2 font-display text-xl font-600 text-chocolate-600 mb-6">
+          <span class="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center">
+            <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          </span>
+          Comments
+          <span class="text-sm font-400 text-chocolate-300">({{ commentaires|length }})</span>
+        </h2>
+
+        <!-- Comment form -->
+        <form action="{% url 'add_comments' recette.id %}" method="POST" class="mb-6">
+          {% csrf_token %}
+          <div class="flex gap-3 items-start">
+            <div class="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-rose-300 to-rose-500 flex items-center justify-center text-white text-sm font-600">
+              {{ user.username|first|upper }}
+            </div>
+            <div class="flex-1">
+              <textarea name="contenu_com" rows="2" class="w-full px-4 py-3 border border-rose-200 rounded-xl text-sm text-chocolate-700 placeholder-chocolate-300 resize-none focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-rose-400 transition-all" placeholder="Share your thoughts..."></textarea>
+            </div>
+          </div>
+          <div class="mt-3 text-right">
+            <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 bg-rose-500 text-white font-600 rounded-xl hover:bg-rose-600 hover:shadow-lg hover:shadow-rose-200 transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+              Post Comment
+            </button>
+          </div>
+        </form>
+
+        <!-- Comment list -->
+        <div class="space-y-4">
+          {% for commentaire in commentaires %}
+          <div class="flex gap-3 items-start">
+            <div class="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-chocolate-300 to-chocolate-500 flex items-center justify-center text-white text-sm font-600">
+              {{ commentaire.user.username|first|upper }}
+            </div>
+            <div class="flex-1 bg-rose-50/40 rounded-2xl p-4">
+              <div class="flex items-center gap-2 mb-1">
+                <p class="text-sm font-600 text-chocolate-600">{{ commentaire.user.username }}</p>
+                <p class="text-xs text-chocolate-300">{{ commentaire.date_publication|date:"M d, Y" }}</p>
+              </div>
+              <p class="text-sm text-chocolate-500 leading-relaxed">{{ commentaire.contenu_com }}</p>
+            </div>
+          </div>
+          {% empty %}
+          <div class="text-center py-8">
+            <p class="text-sm text-chocolate-300">No comments yet. Be the first to share your thoughts!</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Owner actions -->
+      {% if source == "my_recipes" %}
+      <div class="mt-10 pt-8 border-t border-rose-100 flex gap-4">
+        <a href="{% url 'update_recipes' recette.id %}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-chocolate-600 font-600 rounded-xl ring-1 ring-rose-200 hover:bg-rose-50 transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+          Edit
+        </a>
+        <form method="POST" action="{% url 'delete_recipes' recette.id %}" class="inline">
+          {% csrf_token %}
+          <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-rose-600 font-600 rounded-xl ring-1 ring-rose-200 hover:bg-rose-50 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            Delete
+          </button>
+        </form>
+      </div>
+      {% endif %}
     </div>
-  </div>
-  
-
-  <!-- Boutons Modifier / Supprimer -->
-  {% if source == "my_recipes" %}
-  <div class="flex gap-4 pt-6 border-t border-gray-200">
-    <a href="{% url 'update_recipes' recette.id %}" class="text-blue-600 underline">Update recipes</a>
-
-    <form method="POST" action="{% url 'delete_recipes' recette.id %}">
-      {% csrf_token %}
-      <button type="submit" class="text-red-600 underline">Delete recipes</button>
-    </form>
-  </div>
-  {% endif %}
-
+  </article>
 </div>
 {% endblock %}

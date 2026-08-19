@@ -1,103 +1,97 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Publish your own recipes</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: '#ec4899',
-            pastel: '#ffe4e6',
-            chocolate: '#4b2c2c'
-          },
-          fontFamily: {
-            sans: ['"Poppins"', 'sans-serif']
-          }
-        }
-      }
-    }
-  </script>
-</head>
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
 
-<body class="bg-pink-100 min-h-screen flex items-center justify-center font-sans">
+{% block title %}Publish a Recipe — Crumble Kiss{% endblock %}
 
-  {% load static %}
-  {% load widget_tweaks %}
+{% block body %}
+{% include 'includes/navbar.html' %}
 
-  {% block content %}
-  <div class="w-full max-w-6xl bg-white rounded-3xl shadow-xl flex overflow-hidden p-10">
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <!-- Header -->
+  <div class="mb-10 fade-in">
+    <span class="inline-flex items-center gap-2 px-3 py-1 bg-rose-50 text-rose-600 text-xs font-600 rounded-full ring-1 ring-rose-100">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+      New Recipe
+    </span>
+    <h1 class="mt-4 font-display text-4xl font-600 text-chocolate-700">Publish your recipe</h1>
+    <p class="mt-2 text-chocolate-400">Share your culinary creation with the community.</p>
+  </div>
 
-    <!-- Colonne gauche -->
-    <div class="w-1/2 bg-pink-100 p-10 rounded-2xl flex flex-col">
-      <img src="{% static 'recettes/images/my_logo.png' %}" alt="Crumble Kiss Logo" class="w-20 h-20 mb-4">
-      <h2 class="text-2xl font-bold text-primary mb-8">Publish your own recipes</h2>
+  <form method="post" enctype="multipart/form-data" class="bg-white rounded-3xl shadow-xl ring-1 ring-rose-50 overflow-hidden fade-in">
+    {% csrf_token %}
 
-      <form method="post" enctype="multipart/form-data" class="space-y-5 h-full" enctype="multipart/form-data">
-        {% csrf_token %}
-
+    <div class="grid md:grid-cols-2">
+      <!-- Left column -->
+      <div class="p-8 space-y-6 border-b md:border-b-0 md:border-r border-rose-50">
         <div>
-          <label class="block text-sm text-chocolate mb-1">Name of your recipe</label>
-          {{ form.recipe_title|add_class:"w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" }}
+          <label class="block text-sm font-600 text-chocolate-600 mb-2">Recipe Title</label>
+          {{ form.recipe_title|add_class:"w-full px-4 py-3 border border-rose-200 rounded-xl text-sm text-chocolate-700 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-rose-400 transition-all" }}
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-600 text-chocolate-600 mb-2">Prep Time (min)</label>
+            {{ form.time_in_minutes|add_class:"w-full px-4 py-3 border border-rose-200 rounded-xl text-sm text-chocolate-700 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-rose-400 transition-all" }}
+          </div>
+          <div>
+            <label class="block text-sm font-600 text-chocolate-600 mb-2">Category</label>
+            {{ form.category_choices|add_class:"w-full px-4 py-3 border border-rose-200 rounded-xl text-sm text-chocolate-700 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-rose-400 transition-all" }}
+          </div>
         </div>
 
         <div>
-          <label class="block text-sm text-chocolate mb-1">Prep Time</label>
-          {{ form.time_in_minutes|add_class:"w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" }}
+          <label class="block text-sm font-600 text-chocolate-600 mb-2">Ingredients</label>
+          <p class="text-xs text-chocolate-300 mb-2">One per line — list everything needed.</p>
+          {{ form.ingredients_list|add_class:"w-full h-28 px-4 py-3 border border-rose-200 rounded-xl text-sm text-chocolate-700 resize-none focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-rose-400 transition-all" }}
         </div>
 
         <div>
-          <label class="block text-sm text-chocolate mb-1">Servings</label>
-          {{ form.category_choices|add_class:"w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" }}
+          <label class="block text-sm font-600 text-chocolate-600 mb-2">Preparation Steps</label>
+          <p class="text-xs text-chocolate-300 mb-2">Describe each step clearly.</p>
+          {{ form.preparation_steps|add_class:"w-full h-40 px-4 py-3 border border-rose-200 rounded-xl text-sm text-chocolate-700 resize-none focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-rose-400 transition-all" }}
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div class="p-8 space-y-6 bg-rose-50/30">
+        <div>
+          <label class="block text-sm font-600 text-chocolate-600 mb-2">Recipe Photo</label>
+          <input type="file" name="filename" id="imageInput" accept="image/*" class="hidden">
+          <label for="imageInput" class="relative block w-full h-64 bg-white border-2 border-dashed border-rose-200 rounded-2xl overflow-hidden cursor-pointer hover:border-rose-400 transition-colors group">
+            <div id="placeholderState" class="absolute inset-0 flex flex-col items-center justify-center gap-3">
+              <div class="w-16 h-16 rounded-full bg-rose-100 flex items-center justify-center group-hover:bg-rose-200 transition-colors">
+                <svg class="w-8 h-8 text-rose-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              </div>
+              <p class="text-sm font-500 text-chocolate-400">Click to upload a photo</p>
+              <p class="text-xs text-chocolate-300">PNG, JPG up to 10MB</p>
+            </div>
+            <img id="imagePreview" src="" alt="Preview" class="absolute inset-0 w-full h-full object-cover hidden" />
+          </label>
         </div>
 
         <div>
-          <label class="block text-sm text-chocolate mb-1">Ingredients</label>
-          {{ form.ingredients_list|add_class:"w-full h-24 px-4 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary" }}
+          <label class="block text-sm font-600 text-chocolate-600 mb-2">Short Description</label>
+          <p class="text-xs text-chocolate-300 mb-2">A brief, enticing summary of your dish.</p>
+          {{ form.short_description|add_class:"w-full h-32 px-4 py-3 border border-rose-200 rounded-xl text-sm text-chocolate-700 resize-none focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-rose-400 transition-all" }}
         </div>
 
-        <div>
-          <label class="block text-sm text-chocolate mb-1">Preparation Steps</label>
-          {{ form.preparation_steps|add_class:"w-full h-40 px-4 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary" }}
+        <div class="pt-2">
+          <button type="submit" class="w-full py-3.5 bg-rose-500 text-white font-600 rounded-xl hover:bg-rose-600 hover:shadow-lg hover:shadow-rose-200 transition-all flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+            Publish Recipe
+          </button>
         </div>
+      </div>
     </div>
-
-<div class="w-1/2 pl-10 flex flex-col justify-between">Add commentMore actions
-
-  <!-- Bloc image -->
-  <div>
-    <label class="block text-sm text-chocolate mb-2"> </label>
-    <input type="file" name="filename" id="imageInput" accept="image/*" class="hidden">
-    <label for="imageInput" class="relative block w-full h-[300px] bg-gray-100 border border-dashed rounded-xl overflow-hidden cursor-pointer">
-      <span id="plusIcon" class="absolute inset-0 flex items-center justify-center text-6xl text-gray-400">+</span>
-      <img id="imagePreview" src="" alt="Preview" class="absolute inset-0 w-full h-full object-cover hidden rounded-xl" />
-    </label>
-  </div>
-
-  <!-- Bloc description -->
-  <div class="mt-6">
-    <label class="block italic text-sm text-chocolate mb-2">Description</label>
-    {{ form.short_description|add_class:"w-full h-48 px-4 py-2 border rounded-lg resize-none italic focus:outline-none focus:ring-2 focus:ring-primary" }}
-  </div>
-
-  <!-- Bouton -->
-  <div class="mt-6 text-right">
-    <button type="submit" class="bg-primary text-white font-semibold py-2 px-6 rounded-xl shadow hover:bg-pink-500 transition">
-      Publish
-    </button>
-  </div>
+  </form>
 </div>
-
-
-  {% endblock content %}
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const input = document.getElementById("imageInput");
     const preview = document.getElementById("imagePreview");
-    const plus = document.getElementById("plusIcon");
+    const placeholder = document.getElementById("placeholderState");
 
     input.addEventListener("change", function () {
       const file = this.files[0];
@@ -106,14 +100,11 @@
         reader.onload = function (e) {
           preview.src = e.target.result;
           preview.classList.remove("hidden");
-          plus.classList.add("hidden");
+          placeholder.classList.add("hidden");
         };
         reader.readAsDataURL(file);
       }
     });
   });
 </script>
-
-
-</body>
-</html>
+{% endblock %}

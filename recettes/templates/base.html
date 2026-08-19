@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Crumble Kiss{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#fdf8f3',
+            ink: '#2d1b1e',
+            rose: {
+              50: '#fef5f7',
+              100: '#fde8ee',
+              200: '#fbd0dc',
+              300: '#f8a8c0',
+              400: '#f06b94',
+              500: '#e0427a',
+              600: '#c92e62',
+              700: '#a8224f',
+              800: '#7a1838',
+              900: '#4e0f24'
+            },
+            chocolate: {
+              50: '#f7f0ee',
+              100: '#e8d5cf',
+              200: '#d4b3a9',
+              300: '#b88575',
+              400: '#8a5a4a',
+              500: '#5e3a2e',
+              600: '#4b2f2f',
+              700: '#3a2424',
+              800: '#2a1919',
+              900: '#1a0f0f'
+            },
+            gold: {
+              400: '#d4a857',
+              500: '#c69947',
+              600: '#a87d33'
+            }
+          },
+          fontFamily: {
+            display: ['Fraunces', 'serif'],
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .font-display { font-family: 'Fraunces', serif; }
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .card-hover { transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s ease; }
+    .card-hover:hover { transform: translateY(-6px); }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #fdf8f3; }
+    ::-webkit-scrollbar-thumb { background: #f8a8c0; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #f06b94; }
+    .hero-gradient {
+      background: linear-gradient(135deg, #fef5f7 0%, #fde8ee 30%, #fdf8f3 70%, #f7f0ee 100%);
+    }
+    .text-balance { text-wrap: balance; }
+  </style>
+</head>
+<body class="bg-cream text-ink min-h-screen">
+  {% block body %}{% endblock %}
+</body>
+</html>
